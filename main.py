@@ -1,5 +1,6 @@
+import google.cloud
 from google.cloud import pubsub
-from google.cloud import container_v1
+from google.cloud import container
 
 import firebase_admin
 from firebase_admin import credentials
@@ -7,14 +8,21 @@ from firebase_admin import firestore
 
 import requests
 
+import os
+
+apiKey = os.environ['GKE_API_KEY']
+
 cred = credentials.ApplicationDefault()
 firebase_admin.initialize_app(cred, {
   'projectId': 'biopred',
 })
 db = firestore.client()
 
-client = container_v1.ClusterManagerClient()
-url = client.get_cluster(name='projects/biopred/locations/us-east1-b/clusters/biopred-cluster').self_link
+client = container.ClusterManagerClient()
+url = "{}/apis/batch/v1/namespaces/{}/jobs".format(
+  client.get_cluster('biopred', 'us-east1-b', 'biopred-cluster').self_link,
+  'default'
+)
 
 job_yml = """apiVersion: batch/v1
 kind: Job
@@ -28,7 +36,6 @@ spec:
       containers:
       - name: {}
         image: {}
-        command: ["python"]
         args: ["runPredict.py", "{}"]
       restartPolicy: Never
 """
@@ -44,12 +51,13 @@ def getRequest(message):
             'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
-            "{}-job".format(message),
-            "prediction-job",
+            "biopred-{}-job".format(message),
+            "biopred-prediction-job",
             "predict",
             "",
             message
-        )
+        ),
+        params={'key': apiKey}
     )
 
 
