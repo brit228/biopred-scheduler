@@ -54,7 +54,7 @@ def getRequest(message):
             "biopred-{}-job".format(message),
             "biopred-prediction-job",
             "predict",
-            "",
+            "gcr.io/biopred/github.com/brit228/biopred-prediction@sha256:02b32fdfe1fd6e8661a727316bf0871a3734ccd90f4dec8dcac801104f6c2584",
             message
         ),
         params={'key': apiKey}
