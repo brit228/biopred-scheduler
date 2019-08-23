@@ -63,4 +63,4 @@ def getRequest(message):
 
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
-future = subscriber.subscribe(subscription_path, callback)
+future = subscriber.subscribe(subscription_path, getRequest)
