@@ -23,11 +23,7 @@ db = firestore.client()
 
 logging_client = CloudLogging.Client()
 
-client = container.ClusterManagerClient()
-url = "{}/apis/batch/v1/namespaces/{}/jobs".format(
-  client.get_cluster('biopred', 'us-east1-b', 'biopred-cluster').self_link,
-  'default'
-)
+url = "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/batch/v1/namespaces/default/jobs"
 
 job_yml = """apiVersion: batch/v1
 kind: Job
@@ -70,7 +66,7 @@ def callback(message):
     r = requests.post(
         url,
         headers={
-            'Authorization': 'Bearer '+ apiKey,
+            'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
             'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
