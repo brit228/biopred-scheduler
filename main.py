@@ -70,8 +70,8 @@ def callback(message):
     r = requests.post(
         url,
         headers={
-            'Content-Type': 'application/yaml',
-            'Authorization': 'Bearer '+ apiKey
+            'Authorization': 'Bearer '+ apiKey,
+            'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
             "biopred-{}-job".format(msg),
