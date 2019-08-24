@@ -71,7 +71,7 @@ def callback(message):
         url,
         headers={
             'Content-Type': 'application/yaml',
-            'Authorization': 'Bearer '+ gkeApi
+            'Authorization': 'Bearer '+ apiKey
         },
         data=job_yml.format(
             "biopred-{}-job".format(msg),
