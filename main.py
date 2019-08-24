@@ -1,6 +1,7 @@
 import google.cloud
 from google.cloud import pubsub
 from google.cloud import container
+from google.cloud import logging
 
 import firebase_admin
 from firebase_admin import credentials
@@ -18,6 +19,9 @@ firebase_admin.initialize_app(cred, {
   'projectId': 'biopred',
 })
 db = firestore.client()
+
+logging_client = logging.Client()
+logger = logging_client.logger('scheduler-log')
 
 client = container.ClusterManagerClient()
 url = "{}/apis/batch/v1/namespaces/{}/jobs".format(
@@ -57,7 +61,7 @@ spec:
 """
 
 def getRequest(message):
-    print(message)
+    logger.log_text(message)
     doc_ref = db.document(message)
     doc_ref.update({
         "status": "processing"
@@ -84,4 +88,4 @@ future = subscriber.subscribe(sub_path, callback=getRequest)
 
 while True:
     time.sleep(60)
-    print("LOOP")
+    logger.log_text("LOOP")
