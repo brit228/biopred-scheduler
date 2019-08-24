@@ -73,7 +73,7 @@ def callback(message):
             "biopred-{}-job".format(msg.split('/')[-1].lower()),
             "biopred-prediction-job",
             "predict",
-            "gcr.io/biopred/github.com/brit228/biopred-prediction:6b0f315",
+            "gcr.io/biopred/github.com/brit228/biopred-prediction:9fc87f5",
             msg
         ),
         verify=False
