@@ -1,7 +1,7 @@
 import google.cloud
 from google.cloud import pubsub
 from google.cloud import container
-from google.cloud import logging
+from google.cloud import logging as CloudLogging
 
 import firebase_admin
 from firebase_admin import credentials
@@ -21,7 +21,7 @@ firebase_admin.initialize_app(cred, {
 })
 db = firestore.client()
 
-logging_client = logging.Client()
+logging_client = CloudLogging.Client()
 
 client = container.ClusterManagerClient()
 url = "{}/apis/batch/v1/namespaces/{}/jobs".format(
