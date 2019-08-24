@@ -76,7 +76,7 @@ def callback(message):
             "biopred-{}-job".format(msg),
             "biopred-prediction-job",
             "predict",
-            "gcr.io/biopred/github.com/brit228/biopred-prediction@sha256:02b32fdfe1fd6e8661a727316bf0871a3734ccd90f4dec8dcac801104f6c2584",
+            "gcr.io/biopred/github.com/brit228/biopred-prediction:6b0f315",
             message
         ),
         params={'key': apiKey}
@@ -91,3 +91,4 @@ while True:
     for msg in response.received_messages:
         callback(msg.message)
     ack_ids = [msg.ack_id for msg in response.received_messages]
+    subscriber.acknowledge(sub_path, ack_ids)
