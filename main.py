@@ -70,11 +70,11 @@ def callback(message):
             'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
-            "biopred-{}-job".format(msg),
+            "biopred-{}-job".format(msg.split('/')[-1]),
             "biopred-prediction-job",
             "predict",
             "gcr.io/biopred/github.com/brit228/biopred-prediction:6b0f315",
-            message
+            msg
         ),
         verify=False
     )
