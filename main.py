@@ -60,9 +60,9 @@ spec:
       restartPolicy: Never
 """
 
-def getRequest(message):
-    logging.warn(message)
-    doc_ref = db.document(message)
+def callback(message):
+    logging.warn(message.message.data)
+    doc_ref = db.document(message.message.data)
     doc_ref.update({
         "status": "processing"
     })
@@ -72,7 +72,7 @@ def getRequest(message):
             'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
-            "biopred-{}-job".format(message),
+            "biopred-{}-job".format(message.message.data),
             "biopred-prediction-job",
             "predict",
             "gcr.io/biopred/github.com/brit228/biopred-prediction@sha256:02b32fdfe1fd6e8661a727316bf0871a3734ccd90f4dec8dcac801104f6c2584",
@@ -80,11 +80,12 @@ def getRequest(message):
         ),
         params={'key': apiKey}
     )
+    message.ack()
 
 
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
-future = subscriber.subscribe(sub_path, callback=getRequest)
+future = subscriber.subscribe(sub_path, callback)
 
 while True:
     time.sleep(60)
