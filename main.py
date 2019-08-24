@@ -34,16 +34,25 @@ spec:
     metadata:
       name: {}
     spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: pubsub-key
       containers:
       - name: {}
         image: {}
         args: ["runPredict.py", "{}"]
         env:
-          - name: GKE_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: apisecret
-                key: gkeApi
+        - name: GKE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: apisecret
+              key: gkeApi
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
       restartPolicy: Never
 """
 
@@ -74,4 +83,5 @@ sub_path = subscriber.subscription_path('biopred', 'pulljobs')
 future = subscriber.subscribe(sub_path, callback=getRequest)
 
 while True:
-    time.sleep(10)
+    time.sleep(60)
+    print("LOOP")
