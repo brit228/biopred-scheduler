@@ -75,7 +75,8 @@ def callback(message):
             "predict",
             "gcr.io/biopred/github.com/brit228/biopred-prediction:6b0f315",
             message
-        )
+        ),
+        verify=False
     )
     logging.warning(r.text)
 
