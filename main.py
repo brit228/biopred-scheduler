@@ -11,6 +11,7 @@ import requests
 
 import os
 import time
+import logging
 
 apiKey = os.environ['GKE_API_KEY']
 
@@ -21,7 +22,6 @@ firebase_admin.initialize_app(cred, {
 db = firestore.client()
 
 logging_client = logging.Client()
-logger = logging_client.logger('scheduler-log')
 
 client = container.ClusterManagerClient()
 url = "{}/apis/batch/v1/namespaces/{}/jobs".format(
@@ -61,7 +61,7 @@ spec:
 """
 
 def getRequest(message):
-    logger.log_text(message)
+    logging.warn(message)
     doc_ref = db.document(message)
     doc_ref.update({
         "status": "processing"
@@ -88,4 +88,4 @@ future = subscriber.subscribe(sub_path, callback=getRequest)
 
 while True:
     time.sleep(60)
-    logger.log_text("LOOP")
+    logging.warn("LOOP")
