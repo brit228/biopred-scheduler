@@ -81,7 +81,6 @@ def callback(message):
         ),
         params={'key': apiKey}
     )
-    message.ack()
 
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
@@ -91,3 +90,4 @@ while True:
     response = subscriber.pull(sub_path, max_messages=5)
     for msg in response.received_messages:
         callback(msg.message)
+    ack_ids = [msg.ack_id for msg in response.received_messages]
