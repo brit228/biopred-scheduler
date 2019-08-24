@@ -23,7 +23,7 @@ db = firestore.client()
 
 logging_client = CloudLogging.Client()
 
-url = "http://"+os.environ['KUBERNETES_SERVICE_HOST']+':'+os.environ['KUBERNETES_PORT_443_TCP_PORT']+"/apis/batch/v1/namespaces/default/jobs"
+url = "https://"+os.environ['KUBERNETES_SERVICE_HOST']+':'+os.environ['KUBERNETES_PORT_443_TCP_PORT']+"/apis/batch/v1/namespaces/default/jobs"
 
 job_yml = """apiVersion: batch/v1
 kind: Job
