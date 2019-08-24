@@ -61,8 +61,9 @@ spec:
 """
 
 def callback(message):
-    logging.warn(message.message.data)
-    doc_ref = db.document(message.message.data)
+    msg = message.data.decode('utf-8')
+    logging.warning(msg)
+    doc_ref = db.document(msg)
     doc_ref.update({
         "status": "processing"
     })
@@ -72,7 +73,7 @@ def callback(message):
             'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
-            "biopred-{}-job".format(message.message.data),
+            "biopred-{}-job".format(msg),
             "biopred-prediction-job",
             "predict",
             "gcr.io/biopred/github.com/brit228/biopred-prediction@sha256:02b32fdfe1fd6e8661a727316bf0871a3734ccd90f4dec8dcac801104f6c2584",
@@ -82,11 +83,11 @@ def callback(message):
     )
     message.ack()
 
-
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
-future = subscriber.subscribe(sub_path, callback)
 
 while True:
-    time.sleep(60)
-    logging.warn("LOOP")
+    time.sleep(10)
+    response = subscriber.pull(sub_path)
+    for msg in response.received_messages:
+        callback(msg.message)
