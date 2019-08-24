@@ -48,6 +48,7 @@ spec:
 """
 
 def getRequest(message):
+    print(message)
     doc_ref = db.document(message)
     doc_ref.update({
         "status": "processing"
@@ -70,7 +71,7 @@ def getRequest(message):
 
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
-future = subscriber.subscribe(sub_path, getRequest)
+future = subscriber.subscribe(sub_path, callback=getRequest)
 
 while True:
     time.sleep(10)
