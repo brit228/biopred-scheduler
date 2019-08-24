@@ -66,7 +66,7 @@ def callback(message):
     r = requests.post(
         url,
         headers={
-            'Authorization': 'Bearer '+apiKey,
+            'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
             'Content-Type': 'application/yaml'
         },
         data=job_yml.format(
