@@ -9,6 +9,7 @@ from firebase_admin import firestore
 import requests
 
 import os
+import time
 
 apiKey = os.environ['GKE_API_KEY']
 
@@ -70,3 +71,6 @@ def getRequest(message):
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
 future = subscriber.subscribe(sub_path, getRequest)
+
+while True:
+    time.sleep(10)
