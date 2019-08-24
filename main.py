@@ -41,7 +41,7 @@ spec:
       containers:
       - name: {}
         image: {}
-        args: ["runPredict.py", "{}"]
+        command: ["runPredict.py", "{}"]
         env:
         - name: GKE_API_KEY
           valueFrom:
