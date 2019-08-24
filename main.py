@@ -37,6 +37,12 @@ spec:
       - name: {}
         image: {}
         args: ["runPredict.py", "{}"]
+        env:
+          - name: GKE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: apisecret
+                key: gkeApi
       restartPolicy: Never
 """
 
@@ -63,4 +69,4 @@ def getRequest(message):
 
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
-future = subscriber.subscribe(subscription_path, getRequest)
+future = subscriber.subscribe(sub_path, getRequest)
