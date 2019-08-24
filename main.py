@@ -70,7 +70,8 @@ def callback(message):
     r = requests.post(
         url,
         headers={
-            'Content-Type': 'application/yaml'
+            'Content-Type': 'application/yaml',
+            'Authorization': 'Bearer '+ gkeApi
         },
         data=job_yml.format(
             "biopred-{}-job".format(msg),
@@ -78,8 +79,7 @@ def callback(message):
             "predict",
             "gcr.io/biopred/github.com/brit228/biopred-prediction:6b0f315",
             message
-        ),
-        params={'key': apiKey}
+        )
     )
     logging.warning(r.text)
 
