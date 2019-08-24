@@ -88,6 +88,6 @@ sub_path = subscriber.subscription_path('biopred', 'pulljobs')
 
 while True:
     time.sleep(10)
-    response = subscriber.pull(sub_path)
+    response = subscriber.pull(sub_path, max_messages=5)
     for msg in response.received_messages:
         callback(msg.message)
