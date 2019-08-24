@@ -67,7 +67,7 @@ def callback(message):
     doc_ref.update({
         "status": "processing"
     })
-    requests.post(
+    r = requests.post(
         url,
         headers={
             'Content-Type': 'application/yaml'
@@ -81,6 +81,7 @@ def callback(message):
         ),
         params={'key': apiKey}
     )
+    logging.warning(r.text)
 
 subscriber = pubsub.SubscriberClient()
 sub_path = subscriber.subscription_path('biopred', 'pulljobs')
@@ -91,4 +92,5 @@ while True:
     for msg in response.received_messages:
         callback(msg.message)
     ack_ids = [msg.ack_id for msg in response.received_messages]
-    subscriber.acknowledge(sub_path, ack_ids)
+    if len(ack_ids) > 0:
+      subscriber.acknowledge(sub_path, ack_ids)
