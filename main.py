@@ -98,7 +98,7 @@ while True:
         verify=False
     )
     joblist = r.json()
-    for j in joblist['items']:
+    for j in joblist.get('items', []):
         if j['status'].get('active', 0) == 0:
             if j['status'].get('failed', 0) == 0:
                 r = requests.delete(
