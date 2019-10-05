@@ -77,7 +77,7 @@ def on_snapshot(col_snapshot):
             ),
             verify=False
         )
-        logging.warning(r)
+        logging.warning(r.content)
     # r = requests.get(
     #     url,
     #     headers={
