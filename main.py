@@ -62,6 +62,7 @@ def on_snapshot(col_snapshot):
         doc.reference.update({
             "status": "pending"
         })
+        logging.warning(doc.id)
         r = requests.post(
             url,
             headers={
@@ -77,7 +78,6 @@ def on_snapshot(col_snapshot):
             ),
             verify=False
         )
-        logging.warning(r.content)
     # r = requests.get(
     #     url,
     #     headers={
