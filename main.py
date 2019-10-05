@@ -1,5 +1,4 @@
 import google.cloud
-from google.cloud import pubsub
 from google.cloud import container
 from google.cloud import logging as CloudLogging
 
@@ -56,39 +55,26 @@ spec:
       restartPolicy: Never
 """
 
-def callback(message):
-    msg = message.data.decode('utf-8')
-    doc_ref = db.document(msg)
-    doc_ref.update({
-        "status": "processing"
-    })
-    r = requests.post(
-        url,
-        headers={
-            'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
-            'Content-Type': 'application/yaml'
-        },
-        data=job_yml.format(
-            "biopred-{}-job".format(msg.split('/')[-1].lower()),
-            "biopred-prediction-job",
-            "predict",
-            "gcr.io/biopred/github.com/brit228/biopred-prediction:latest",
-            msg
-        ),
-        verify=False
-    )
-
-subscriber = pubsub.SubscriberClient()
-sub_path = subscriber.subscription_path('biopred', 'pulljobs')
-
-while True:
-    time.sleep(1)
-    response = subscriber.pull(sub_path, max_messages=10)
-    for msg in response.received_messages:
-        callback(msg.message)
-    ack_ids = [msg.ack_id for msg in response.received_messages]
-    if len(ack_ids) > 0:
-        subscriber.acknowledge(sub_path, ack_ids)
+def on_snapshot(col_snapshot, change, read_time):
+    for doc in col_snapshot:
+        doc.update({
+            "status": "pending"
+        })
+        r = requests.post(
+            url,
+            headers={
+                'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
+                'Content-Type': 'application/yaml'
+            },
+            data=job_yml.format(
+                "biopred-{}-job".format(doc.id),
+                "biopred-prediction-job",
+                "predict",
+                "gcr.io/biopred/github.com/brit228/biopred-prediction:latest",
+                doc.id
+            ),
+            verify=False
+        )
     r = requests.get(
         url,
         headers={
@@ -124,3 +110,9 @@ while True:
                 doc_ref.update({
                     "status": "failed"
                 })
+
+rnaprotein_query = db.collection('jobs/rnaprotein/jobs').where('status', '==', 'pending')
+rnaprotein_query_watch = rnaprotein_query.on_snapshot(on_snapshot)
+
+while True:
+    time.sleep(1)
