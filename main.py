@@ -55,7 +55,7 @@ spec:
       restartPolicy: Never
 """
 
-def on_snapshot(col_snapshot, change, read_time):
+def on_snapshot(col_snapshot):
     for doc in col_snapshot:
         doc.update({
             "status": "pending"
@@ -111,8 +111,6 @@ def on_snapshot(col_snapshot, change, read_time):
     #                 "status": "failed"
     #             })
 
-rnaprotein_query = db.collection('jobs/rnaprotein/jobs').where('status', '==', 'processing')
-rnaprotein_query_watch = rnaprotein_query.on_snapshot(on_snapshot)
-
 while True:
     time.sleep(10)
+    on_snapshot(db.collection('jobs/rnaprotein/jobs').where('status', '==', 'processing').stream())
