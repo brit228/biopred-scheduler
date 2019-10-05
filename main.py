@@ -73,7 +73,7 @@ def on_snapshot(col_snapshot):
                 "biopred-prediction-job",
                 "predict",
                 "gcr.io/biopred/github.com/brit228/biopred-prediction:latest",
-                doc.id
+                doc.reference.path
             ),
             verify=False
         )
