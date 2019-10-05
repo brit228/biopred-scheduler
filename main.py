@@ -112,7 +112,7 @@ def on_snapshot(col_snapshot, change, read_time):
     #             })
 
 rnaprotein_query = db.collection('jobs/rnaprotein/jobs').where('status', '==', 'pending')
-rnaprotein_query_watch = rnaprotein_query.on_snapshot(on_snapshot)
 
 while True:
     time.sleep(10)
+    rnaprotein_query.on_snapshot(on_snapshot)
