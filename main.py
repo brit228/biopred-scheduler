@@ -57,7 +57,7 @@ spec:
 
 def on_snapshot(col_snapshot):
     for doc in col_snapshot:
-        doc.update({
+        doc.reference.update({
             "status": "pending"
         })
         r = requests.post(
