@@ -62,7 +62,6 @@ def on_snapshot(col_snapshot):
         doc.reference.update({
             "status": "pending"
         })
-        logging.warning(doc.id)
         r = requests.post(
             url,
             headers={
@@ -70,7 +69,7 @@ def on_snapshot(col_snapshot):
                 'Content-Type': 'application/yaml'
             },
             data=job_yml.format(
-                "biopred-{}-job".format(doc.id),
+                "biopred-{}-job".format(doc.id.lower()),
                 "biopred-prediction-job",
                 "predict",
                 "gcr.io/biopred/github.com/brit228/biopred-prediction:latest",
