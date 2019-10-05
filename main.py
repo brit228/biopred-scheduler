@@ -56,7 +56,6 @@ spec:
 """
 
 def on_snapshot(col_snapshot, change, read_time):
-    logging_client.log_text('A')
     for doc in col_snapshot:
         doc.update({
             "status": "pending"
@@ -117,4 +116,3 @@ rnaprotein_query_watch = rnaprotein_query.on_snapshot(on_snapshot)
 
 while True:
     time.sleep(10)
-    logging_client.log_text('H')
