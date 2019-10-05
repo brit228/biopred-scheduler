@@ -21,6 +21,8 @@ firebase_admin.initialize_app(cred, {
 db = firestore.client()
 
 logging_client = CloudLogging.Client()
+logging_client.setup_logging()
+
 
 url = "https://kubernetes.default.svc.cluster.local/apis/batch/v1/namespaces/default/jobs"
 
@@ -75,6 +77,7 @@ def on_snapshot(col_snapshot):
             ),
             verify=False
         )
+        logging.warning(r)
     # r = requests.get(
     #     url,
     #     headers={
