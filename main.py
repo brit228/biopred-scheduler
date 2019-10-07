@@ -77,41 +77,41 @@ def on_snapshot(col_snapshot):
             ),
             verify=False
         )
-    # r = requests.get(
-    #     url,
-    #     headers={
-    #         'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
-    #         'Content-Type': 'application/yaml'
-    #     },
-    #     verify=False
-    # )
-    # joblist = r.json()
-    # for j in joblist.get('items', []):
-    #     if j['status'].get('active', 0) == 0:
-    #         if j['status'].get('failed', 0) == 0:
-    #             r = requests.delete(
-    #                 url+'/'+j['metadata']['name'],
-    #                 headers={
-    #                     'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
-    #                     'Content-Type': 'application/yaml'
-    #                 },
-    #                 data='gracePeriodSeconds: 0\norphanDependents: false\n',
-    #                 verify=False
-    #             )
-    #         else:
-    #             r = requests.delete(
-    #                 url+'/'+j['metadata']['name'],
-    #                 headers={
-    #                     'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
-    #                     'Content-Type': 'application/yaml'
-    #                 },
-    #                 data='gracePeriodSeconds: 0\norphanDependents: false\n',
-    #                 verify=False
-    #             )
-    #             doc_ref = db.document(j['metadata']['name'].split('-')[1])
-    #             doc_ref.update({
-    #                 "status": "failed"
-    #             })
+    r = requests.get(
+        url,
+        headers={
+            'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
+            'Content-Type': 'application/yaml'
+        },
+        verify=False
+    )
+    joblist = r.json()
+    for j in joblist.get('items', []):
+        if j['status'].get('active', 0) == 0:
+            if j['status'].get('failed', 0) == 0:
+                r = requests.delete(
+                    url+'/'+j['metadata']['name'],
+                    headers={
+                        'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
+                        'Content-Type': 'application/yaml'
+                    },
+                    data='gracePeriodSeconds: 0\norphanDependents: false\n',
+                    verify=False
+                )
+            else:
+                r = requests.delete(
+                    url+'/'+j['metadata']['name'],
+                    headers={
+                        'Authorization': 'Bearer '+ open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read().strip(),
+                        'Content-Type': 'application/yaml'
+                    },
+                    data='gracePeriodSeconds: 0\norphanDependents: false\n',
+                    verify=False
+                )
+                doc_ref = db.document(j['metadata']['name'].split('-')[1])
+                doc_ref.update({
+                    "status": "failed"
+                })
 
 while True:
     time.sleep(10)
